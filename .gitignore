@@ -1,0 +1,4 @@
+# The book itself is copyrighted - never commit it
+*.pdf
+.ipynb_checkpoints/
+__pycache__/
