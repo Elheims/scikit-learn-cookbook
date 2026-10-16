@@ -19,6 +19,9 @@ Cells labelled **Extension** are *not* in the book's code; they are small demos 
 | 3 | Dimensionality Reduction Techniques | Done |
 | 4 | Building Models with Distance Metrics and Nearest Neighbors | Done |
 | 5 | Linear Models and Regularization | Done |
+| 6 | Advanced Logistic Regression and Extensions | Done |
+| 7 | Support Vector Machines and Kernel Methods | Done |
+| 8 | Tree-Based Algorithms and Ensemble Methods | Done |
 
 (Assignment scope: Chapters 1–5. Deadline: 10 Oct 2026, 23:59.)
 
@@ -97,6 +100,48 @@ From a straight line to penalised and non-linear fits. The chapter covers:
 
 This chapter has the most book corrections: the first synthetic dataset overwrites 7 of its 10 informative columns (so the models' R² of about 0.1 is not "multicollinearity"), the coefficient-path plot shows no shrinkage at the book's data scale, and the polynomial/spline conclusions are drawn from test-set selection and training error.
 
+### Chapter 6 — Advanced Logistic Regression and Extensions
+Notebook: [`ch06_advanced_logistic_regression.ipynb`](06.%20Advanced%20Logistic%20Regression/ch06_advanced_logistic_regression.ipynb)
+
+Classification with regression machinery. The chapter covers:
+
+- **Logistic regression** — the sigmoid and log-odds, maximum likelihood (log-loss checked by hand), probabilities computed from the coefficients, odds ratios, and why the 0.5 threshold is a choice.
+- **Multiclass** — one-vs-rest vs multinomial (softmax), verified by hand; decision boundaries for both. The book's code for this recipe no longer runs on current scikit-learn and is adapted.
+- **Regularization** — L2 vs L1 with `C` (inverse strength), sparsity (7 of 30 features survive at `C=0.1`), coefficient paths against `C`, `LogisticRegressionCV`, and the modern `l1_ratio` API.
+- **Multilabel classification** — one classifier per label, `MultiOutputClassifier`, classifier chains, hamming loss vs exact-match accuracy, and the label co-occurrence analysis (reproduces the book's counts exactly).
+- **Evaluation** — accuracy, precision, recall, F1, ROC and AUC (AUC verified by brute force), and how the decision threshold trades missed cancers against false alarms.
+- **Practical exercises** — tuned L1/L2 models, multinomial evaluation on Iris, and a mesh-grid decision-boundary plot.
+
+Book inaccuracies found here include code that no longer runs (`multi_class=`, `liblinear` for multiclass), a `SyntaxError` in the co-occurrence function, a wrong "high kurtosis" claim, and a Ridge-vs-Lasso conclusion that holds for only one class.
+
+### Chapter 7 — Support Vector Machines and Kernel Methods
+Notebook: [`ch07_svm_kernel_methods.ipynb`](07.%20Support%20Vector%20Machines%20and%20Kernel%20Methods/ch07_svm_kernel_methods.ipynb)
+
+Maximum-margin classification and the kernel trick. The chapter covers:
+
+- **SVM basics** — the maximum-margin hyperplane, support vectors, the soft margin and `C` (inspected directly: weight vector, margin width, `decision_function = w·x + b`), one-vs-one multiclass, and `SVR` on a real continuous target.
+- **Kernels** — linear, polynomial and RBF; the kernel trick verified numerically (kernel value = dot product of an explicit feature map), a "lift to a higher dimension" demo, the effect of `gamma` on the two-moons data, and custom/precomputed kernels.
+- **Tuning** — grid search over `C`, `kernel`, `degree` (reproduces the book's result and shows that 8 configurations tie), a `C` × `gamma` heat-map, randomized search, and a correctly structured grid.
+- **High-dimensional data** — default SVMs overfit wide data; regularisation, RBF, L1 and `PCA(50)` → RBF (0.95) fix it, and standardising turns out to hurt because the feature scale carries signal.
+- **Evaluation** — report, ROC and AUC; why a ROC needs only `decision_function`; calibrated probabilities with `CalibratedClassifierCV` (the book's `probability=True` is deprecated).
+- **Practical exercises** — a simple SVM, a tuned SVM on breast cancer, and decision-function plots with margins and support vectors.
+
+Book inaccuracies found here include a hyperplane described as "a curved line", a "decision boundary" figure that is actually an SVR output, a `NameError` in the evaluation recipe, and a high-dimensional recipe that promises a fix it never shows.
+
+### Chapter 8 — Tree-Based Algorithms and Ensemble Methods
+Notebook: [`ch08_tree_based_ensembles.ipynb`](08.%20Tree-Based%20Algorithms%20and%20Ensemble%20Methods/ch08_tree_based_ensembles.ipynb)
+
+Recursive splits and the ensembles built from them. The chapter covers:
+
+- **Decision trees** — Gini impurity and entropy computed by hand, the best split found by brute force (and the exact tie that scikit-learn breaks randomly), reading a fitted tree, a flower's path down it, the effect of each complexity hyper-parameter, validation curve, cost-complexity pruning, regression trees, and scale/NaN/categorical behaviour.
+- **Random forests and bagging** — a forest built from scratch, soft voting verified, out-of-bag accuracy, repeated-CV comparison with a single tree on two datasets, and impurity vs permutation importance (with noise columns and correlated features).
+- **Gradient boosting** — boosting written from scratch and matched exactly to `GradientBoostingRegressor`, staged curves, the learning-rate / number-of-trees trade-off, real early stopping, and `HistGradientBoosting`.
+- **Tuning** — the book's grid search (20 of 27 configurations tie), `RandomizedSearchCV` (non-adaptive), the heat-map sliced by learning rate, and validation curves for a forest.
+- **Comparing ensembles** — bagging vs boosting vs stacking over three datasets with repeated CV, and stacking rebuilt by hand from out-of-fold predictions.
+- **Practical exercises** — a readable depth-3 tree, a tuned forest on Wine, and boosting vs forest on the digits.
+
+Book inaccuracies found here include a Gini range of "up to 1.0", `RandomizedSearchCV` described as adaptive, "early stopping" confused with pre-pruning, and a forest-vs-tree "improvement" on Iris that vanishes under cross-validation.
+
 ## Repository structure
 
 ```
@@ -111,6 +156,12 @@ scikit-learn-cookbook/
 │   └── ch04_distance_metrics_knn.ipynb
 ├── 05. Linear Models and Regularization/
 │   └── ch05_linear_models.ipynb
+├── 06. Advanced Logistic Regression/
+│   └── ch06_advanced_logistic_regression.ipynb
+├── 07. Support Vector Machines and Kernel Methods/
+│   └── ch07_svm_kernel_methods.ipynb
+├── 08. Tree-Based Algorithms and Ensemble Methods/
+│   └── ch08_tree_based_ensembles.ipynb
 └── README.md
 ```
 
