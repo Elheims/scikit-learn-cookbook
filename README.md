@@ -22,8 +22,13 @@ Cells labelled **Extension** are *not* in the book's code; they are small demos 
 | 6 | Advanced Logistic Regression and Extensions | Done |
 | 7 | Support Vector Machines and Kernel Methods | Done |
 | 8 | Tree-Based Algorithms and Ensemble Methods | Done |
+| 9 | Text Processing and Multiclass Classification | Done |
+| 10 | Clustering Techniques | Done |
+| 11 | Novelty and Outlier Detection | Done |
+| 12 | Cross-Validation and Model Evaluation Techniques | Done |
+| 13 | Deploying scikit-learn Models in Production | Done |
 
-(Assignment scope: Chapters 1–5. Deadline: 10 Oct 2026, 23:59.)
+(Assignment scope: Chapters 1–5 were due 10 Oct 2026, 23:59; Chapters 9–13 are due 24 Oct 2026, 23:59. Chapters 6–8 are included as well.)
 
 ## Chapter overviews
 
@@ -142,6 +147,82 @@ Recursive splits and the ensembles built from them. The chapter covers:
 
 Book inaccuracies found here include a Gini range of "up to 1.0", `RandomizedSearchCV` described as adaptive, "early stopping" confused with pre-pruning, and a forest-vs-tree "improvement" on Iris that vanishes under cross-validation.
 
+### Chapter 9 — Text Processing and Multiclass Classification
+Notebook: [`ch09_text_processing_multiclass.ipynb`](09.%20Text%20Processing%20and%20Multiclass%20Classification/ch09_text_processing_multiclass.ipynb)
+
+From raw text to a classifier, on the NLTK `movie_reviews`, `reuters` and `brown` corpora. The chapter covers:
+
+- **Text processing** — `CountVectorizer`, sparse document-term matrices, stop words (including why they remove negations), a Porter-stemming analyzer, and whether any of it changes accuracy (cross-validated).
+- **Vectorization** — Bag of Words vs TF-IDF (TF-IDF reproduced by hand), per-class characteristic terms, BoW vs TF-IDF with a linear SVM, sparse vs dense memory, `HashingVectorizer`.
+- **Feature extraction** — n-grams, POS tagging, a proper-noun proxy for NER, the vocabulary explosion of n-grams and their (lack of) effect on movie-review accuracy.
+- **Classification models** — Naive Bayes, SVM and logistic regression on 15 Brown genres; the book's accuracies (0.228 / 0.332 / 0.324) are reproduced and then diagnosed: defaults under-fit TF-IDF, and tuned models tie at about 0.5.
+- **Multiclass strategies** — OvR vs OvO (15 vs 105 models), ten repeated splits, and a multilabel example on Reuters.
+- **Evaluation** — the book's report and confusion matrix (0.803) recomputed by hand, a confidence interval, ROC/AUC, cross-validation and a learning curve.
+- **Practical exercises** — cleaning and vectorising, n-gram features, and an 8-topic Reuters classifier.
+
+Book inaccuracies found here include a plot that draws 18,881 bars instead of 20, a split in the printed code that cannot produce Figures 9.8/9.9, an `except nltk.downloader.DownloadError` that does not exist, a Naive Bayes "performs well" claim contradicted by its own results, and an NER section without any NER code.
+
+### Chapter 10 — Clustering Techniques
+Notebook: [`ch10_clustering.ipynb`](10.%20Clustering%20Techniques/ch10_clustering.ipynb)
+
+Unsupervised grouping of unlabelled data. The chapter covers:
+
+- **Introduction** — what clustering needs (a distance), and a demo of why scaling matters (ARI 0.81 → 0.50 after a change of units).
+- **K-means** — Lloyd's algorithm written by hand and matched exactly, initialisation and local minima (K-means++ and `n_init`), and the elbow method compared with silhouette, Davies-Bouldin, Calinski-Harabasz and ARI.
+- **Hierarchical clustering** — dendrogram, four linkages (single and average chain), merge heights and cutting the tree.
+- **DBSCAN** — core/border/noise points, the k-distance plot, and a sensitivity grid over `eps` and `min_samples`.
+- **Evaluation metrics** — the book's silhouette / Davies-Bouldin / ARI (0.534 / 0.702 / 0.814) checked by hand, and a case where internal metrics prefer the wrong clustering.
+- **Choosing an algorithm** — a 3 × 3 grid of algorithms and datasets, measured scalability and distance concentration in high dimensions.
+- **Spectral clustering and GMMs** — soft assignments, BIC, covariance types and over-confidence.
+- **Practical exercises** — K-means on Iris, DBSCAN vs K-means on moons, PCA + GMM on the digits.
+
+Book inaccuracies found here include an elbow that says 2–3 for data generated with 4 centres, a `CalibratedClassifierCV` suggestion that cannot work for a GMM, a spectral-scalability claim that holds only conditionally, and `eps=0.2` presented without noting that it breaks after standardising.
+
+### Chapter 11 — Novelty and Outlier Detection
+Notebook: [`ch11_outlier_novelty_detection.ipynb`](11.%20Novelty%20and%20Outlier%20Detection/ch11_outlier_novelty_detection.ipynb)
+
+Finding anomalies in training data (outliers) and in new data (novelties). The chapter covers:
+
+- **Introduction** — outliers vs novelties, `contamination` (it fixes *how many* points are flagged, not which), and the `novelty=False/True` API of LOF.
+- **Isolation Forest** — the anomaly score recomputed by hand, the cross-shaped decision surface, and the missing `feature_importances_`.
+- **One-Class SVM** — what `nu` and `gamma` really do (measured), the effect of scaling, and the book's "failure" traced to a data bug.
+- **LOF** — the algorithm written by hand, a local outlier ranked 16th by LOF vs 39th (Isolation Forest) and 133rd (One-Class SVM).
+- **Evaluation** — the book's confusion matrix reproduced exactly, and its ROC-AUC of 0.005 explained as a sign error (0.995 once negated); threshold tuning and precision-recall.
+- **Handling outliers** — removal, median replacement, capping and flagging, their side effects, and a regression experiment showing a robust model beating detect-and-remove.
+- **Choosing a technique** — the book's comparison table tested on three labelled scenarios, timings and distance concentration.
+- **Practical exercises** — Isolation Forest, LOF and One-Class SVM on simulated data.
+
+Book inaccuracies found here include an inverted ROC-AUC, a One-Class SVM "failure" caused by test data drawn around a different centre, `nu` described backwards, `feature_importances_` that does not exist for Isolation Forest, and LOF wrongly described as unable to predict.
+
+### Chapter 12 — Cross-Validation and Model Evaluation Techniques
+Notebook: [`ch12_cross_validation.ipynb`](12.%20Cross-Validation%20and%20Model%20Evaluation%20Techniques/ch12_cross_validation.ipynb)
+
+How to estimate generalisation honestly. The chapter covers:
+
+- **Cross-validation** — k-fold vs stratified k-fold, fold composition on rare classes, and 300 repeated shuffles showing the book's 0.756 vs 0.766 is noise.
+- **Advanced methods** — LOOCV (with the closed-form shortcut of `RidgeCV`), nested CV, selection bias on pure-noise data, data leakage through feature selection, `GroupKFold` and `TimeSeriesSplit`.
+- **Implementing CV** — `cross_val_score`, `cross_validate`, `GridSearchCV`, a metrics overview (the recipe the book announces but omits), and out-of-fold predictions.
+- **Model selection** — grid vs random search, what each actually evaluated, and how much the search itself varies across seeds.
+- **Generalizability** — learning and validation curves with error bands, a model that really over-fits, and why a converged curve is not the same as a good model.
+- **Practical exercises** — multi-metric CV, grid search with nested CV, and curves on the digits data.
+
+Book inaccuracies found here include a "0.593 MSE" that appears nowhere (the nested-CV 0.480 is an R²), the claim that `cv=5` did not stratify (it does), random search described as using fewer evaluations (10 candidates vs 6), and a learning-curve reading that contradicts the book's own figure.
+
+### Chapter 13 — Deploying scikit-learn Models in Production
+Notebook: [`ch13_deploying_models.ipynb`](13.%20Deploying%20scikit-learn%20Models%20in%20Production/ch13_deploying_models.ipynb)
+
+From a fitted model to a maintained service. The chapter covers:
+
+- **Deployment overview** — round-trip verification, a simulated prediction endpoint with input validation, and single vs batch latency (about 700× per sample).
+- **Serialization** — `pickle` vs `joblib` measured, a harmless demonstration that unpickling runs code, version-mismatch warnings and checksums.
+- **Scaling** — `n_jobs` measured for single rows, batches, fitting and cross-validation (parallelism can be 3× slower for small requests).
+- **Monitoring** — the book's stream reproduced exactly (accuracy 0.30–0.38, worse than chance), then a real drift simulation with static, online and trigger-based models and a label-free KS drift test.
+- **Life cycle** — a working artifact with metadata, SHA-256 and a golden prediction snapshot, with upgrade, corruption and rollback scenarios.
+- **Deployment pipelines** — training–serving skew, and a multi-check deployment gate compared with the book's.
+- **Practical exercises** — reloading a pipeline, monitoring with retraining, and threshold-based deployment checks.
+
+Book inaccuracies found here include a monitoring "simulation" on an unrelated dataset, a validation snapshot that crashes (Iris through a 20-feature model), a hard-coded library version, and a CI check on random noise that can never pass. All artifacts are written to a temporary folder, not to the repository.
+
 ## Repository structure
 
 ```
@@ -162,6 +243,16 @@ scikit-learn-cookbook/
 │   └── ch07_svm_kernel_methods.ipynb
 ├── 08. Tree-Based Algorithms and Ensemble Methods/
 │   └── ch08_tree_based_ensembles.ipynb
+├── 09. Text Processing and Multiclass Classification/
+│   └── ch09_text_processing_multiclass.ipynb
+├── 10. Clustering Techniques/
+│   └── ch10_clustering.ipynb
+├── 11. Novelty and Outlier Detection/
+│   └── ch11_outlier_novelty_detection.ipynb
+├── 12. Cross-Validation and Model Evaluation Techniques/
+│   └── ch12_cross_validation.ipynb
+├── 13. Deploying scikit-learn Models in Production/
+│   └── ch13_deploying_models.ipynb
 └── README.md
 ```
 
@@ -170,7 +261,7 @@ scikit-learn-cookbook/
 Tested with Python 3.14, scikit-learn 1.9.1, NumPy 2.5.3.
 
 ```bash
-pip install scikit-learn numpy pandas matplotlib seaborn scipy joblib jupyter
+pip install scikit-learn numpy pandas matplotlib seaborn scipy joblib nltk jupyter
 jupyter lab
 ```
 
